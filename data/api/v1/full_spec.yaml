@@ -6231,6 +6231,13 @@ components:
       description: 'Object describing the assertions type, their associated operator,
 
         which property they apply , and upon which target.'
+      oneOf:
+      - $ref: '#/components/schemas/SyntheticsAssertionStringTarget'
+      - $ref: '#/components/schemas/SyntheticsAssertionIntegerTarget'
+      - $ref: '#/components/schemas/SyntheticsAssertionJSONPathTarget'
+      type: object
+    SyntheticsAssertionIntegerTarget:
+      description: An assertion which uses an integer target.
       properties:
         operator:
           $ref: '#/components/schemas/SyntheticsAssertionOperator'
@@ -6238,8 +6245,34 @@ components:
           description: The associated assertion property.
           type: string
         target:
-          description: Target to apply the assertion to. It can be a string, a number,
-            or a Date.
+          description: Integer value used by the operator.
+          type: integer
+        type:
+          $ref: '#/components/schemas/SyntheticsAssertionType'
+      required:
+      - type
+      - operator
+      type: object
+    SyntheticsAssertionJSONPathTarget:
+      description: An validatesJSONPath assertion.
+      properties:
+        operator:
+          $ref: '#/components/schemas/SyntheticsAssertionOperator'
+        property:
+          description: The associated assertion property.
+          type: string
+        target:
+          description: Composed target for validatesJSONPath operator.
+          properties:
+            jsonPath:
+              description: The JSON path to assert.
+              type: string
+            operator:
+              description: The specific operator to use on the path.
+              type: string
+            targetValue:
+              description: The path target value to compare to.
+              type: string
           type: object
         type:
           $ref: '#/components/schemas/SyntheticsAssertionType'
@@ -6255,10 +6288,13 @@ components:
       - is
       - isNot
       - lessThan
+      - moreThan
       - matches
       - doesNotMatch
       - validates
+      - validatesJSONPath
       - isInMoreThan
+      - isInLessThan
       type: string
       x-enum-varnames:
       - CONTAINS
@@ -6266,14 +6302,35 @@ components:
       - IS
       - IS_NOT
       - LESS_THAN
+      - MORE_THAN
       - MATCHES
       - DOES_NOT_MATCH
       - VALIDATES
+      - VALIDATES_JSON_PATH
       - IS_IN_MORE_DAYS_THAN
+      - IS_IN_LESS_DAYS_THAN
+    SyntheticsAssertionStringTarget:
+      description: An assertion which uses a string target.
+      properties:
+        operator:
+          $ref: '#/components/schemas/SyntheticsAssertionOperator'
+        property:
+          description: The associated assertion property.
+          type: string
+        target:
+          description: String value used by the operator.
+          type: string
+        type:
+          $ref: '#/components/schemas/SyntheticsAssertionType'
+      required:
+      - type
+      - operator
+      type: object
     SyntheticsAssertionType:
       description: Type of the assertion.
       enum:
       - body
+      - connection
       - header
       - statusCode
       - certificate
@@ -6282,6 +6339,7 @@ components:
       type: string
       x-enum-varnames:
       - BODY
+      - CONNECTION
       - HEADER
       - STATUS_CODE
       - CERTIFICATE
